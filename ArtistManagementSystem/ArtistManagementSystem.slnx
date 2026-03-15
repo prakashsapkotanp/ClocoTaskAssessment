@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="artistmanagementsystem.client/artistmanagementsystem.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ArtistManagementSystem.Server/ArtistManagementSystem.Server.csproj" />
+</Solution>
