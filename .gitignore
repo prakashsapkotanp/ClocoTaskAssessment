@@ -1,0 +1,4 @@
+node_modules/
+bin
+.vs
+package-lock.json
