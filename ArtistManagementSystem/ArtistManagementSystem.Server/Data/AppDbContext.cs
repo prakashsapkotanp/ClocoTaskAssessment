@@ -24,6 +24,7 @@ namespace ArtistManagementSystem.Server.Data
             modelBuilder.Entity<UserModel>().ToTable("user");
             modelBuilder.Entity<ArtistModel>().ToTable("artist");
             modelBuilder.Entity<MusicModel>().ToTable("music");
+            modelBuilder.Entity<RoleModel>().ToTable("role");
         }
     }
 }

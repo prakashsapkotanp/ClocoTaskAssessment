@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArtistManagementSystem.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260315174915_initial-migration")]
+    [Migration("20260316134450_initial-migration")]
     partial class initialmigration
     {
         /// <inheritdoc />
@@ -124,7 +124,7 @@ namespace ArtistManagementSystem.Server.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("RoleModel");
+                    b.ToTable("role", (string)null);
                 });
 
             modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserModel", b =>

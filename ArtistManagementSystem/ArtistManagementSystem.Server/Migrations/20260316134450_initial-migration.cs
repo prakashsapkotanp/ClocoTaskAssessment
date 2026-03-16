@@ -32,7 +32,7 @@ namespace ArtistManagementSystem.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleModel",
+                name: "role",
                 columns: table => new
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false)
@@ -44,7 +44,7 @@ namespace ArtistManagementSystem.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleModel", x => x.RoleId);
+                    table.PrimaryKey("PK_role", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,9 +106,9 @@ namespace ArtistManagementSystem.Server.Migrations
                 {
                     table.PrimaryKey("PK_UserRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRoles_RoleModel_RoleId",
+                        name: "FK_UserRoles_role_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "RoleModel",
+                        principalTable: "role",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -148,7 +148,7 @@ namespace ArtistManagementSystem.Server.Migrations
                 name: "artist");
 
             migrationBuilder.DropTable(
-                name: "RoleModel");
+                name: "role");
 
             migrationBuilder.DropTable(
                 name: "user");
