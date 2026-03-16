@@ -121,7 +121,7 @@ namespace ArtistManagementSystem.Server.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("RoleModel");
+                    b.ToTable("role", (string)null);
                 });
 
             modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserModel", b =>

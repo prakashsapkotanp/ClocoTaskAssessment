@@ -11,9 +11,9 @@ namespace ArtistManagementSystem.Server.Models.Enums
 
     public enum Gender
     {
-        male,
-        female,
-        other
+        m,
+        f,
+        o
     }
     public enum Genre
     {
