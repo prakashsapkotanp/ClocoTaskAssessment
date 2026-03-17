@@ -18,12 +18,12 @@ namespace ArtistManagementSystem.Server.Controllers
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10) =>
             Ok(await _service.GetArtistsAsync(page, pageSize));
 
-        [Authorize(Roles = "artist_manager")]
+        [Authorize(Roles = "super_admin,artist_manager")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ArtistModel model) =>
             Ok(await _service.CreateArtistAsync(model));
 
-        [Authorize(Roles = "artist_manager")]
+        [Authorize(Roles = "super_admin,artist_manager")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ArtistModel model)
         {
@@ -31,17 +31,17 @@ namespace ArtistManagementSystem.Server.Controllers
             return await _service.UpdateArtistAsync(model) ? Ok() : BadRequest();
         }
 
-        [Authorize(Roles = "artist_manager")]
+        [Authorize(Roles = "super_admin,artist_manager")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) =>
             await _service.DeleteArtistAsync(id) ? Ok() : BadRequest();
 
-        [Authorize(Roles = "artist_manager")]
+        [Authorize(Roles = "super_admin,artist_manager")]
         [HttpGet("export")]
         public async Task<IActionResult> Export() =>
             File(await _service.ExportToCsvAsync(), "text/csv", "artists.csv");
 
-        [Authorize(Roles = "artist_manager")]
+        [Authorize(Roles = "super_admin,artist_manager")]
         [HttpPost("import")]
         public async Task<IActionResult> Import(IFormFile file)
         {
