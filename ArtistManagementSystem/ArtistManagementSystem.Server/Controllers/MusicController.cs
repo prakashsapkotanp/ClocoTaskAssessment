@@ -31,9 +31,9 @@ namespace ArtistManagementSystem.Server.Controllers
 
         [Authorize(Roles = "super_admin,artist")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int artistId, int id, [FromBody] MusicModel model)
+        public async Task<IActionResult> Update(int artistId, int musicId, [FromBody] MusicModel model)
         {
-            model.Id = id;
+            model.Id = musicId;
             model.ArtistId = artistId;
             return await _service.UpdateMusicAsync(model) ? Ok() : BadRequest();
         }

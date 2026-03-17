@@ -56,8 +56,8 @@ namespace ArtistManagementSystem.Server.Services
                         };
                         await _repo.CreateArtistAsync(artist);
                         count++;
-                    } catch {
-                        // Skip invalid rows
+                    } catch(Exception ex) {
+                        throw ex;
                     }
                 }
             }
