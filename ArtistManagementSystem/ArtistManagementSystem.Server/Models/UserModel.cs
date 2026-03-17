@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.Models.Enums;
+using ArtistManagementSystem.Server.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,7 +35,9 @@ namespace ArtistManagementSystem.Server.Models
         public DateTime CreatedAt { get; set; } 
 
         public DateTime? UpdatedAt { get; set; }
-        public virtual ICollection<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();
+        
+        [Required]
+        public RoleType Role { get; set; }
     }
 
 }
