@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.DTOs;
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Models.Enums;
@@ -49,6 +49,7 @@ namespace ArtistManagementSystem.Server.Repositories
                     Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : null,
                     Dob = (DateTime)reader["Dob"],
                     Gender = Enum.Parse<Gender>(reader["Gender"].ToString()!, true),
+                    Role = Enum.Parse<RoleType>(reader["Role"].ToString()!, true),
                     CreatedAt = (DateTime)reader["CreatedAt"]
                 });
             }

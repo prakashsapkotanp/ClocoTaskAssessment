@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.DTOs;
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Repositories;
@@ -82,11 +82,8 @@ namespace ArtistManagementSystem.Server.Services
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
             };
 
-            // Add roles to claims for [Authorize(Roles = "Admin")] to work
-            foreach (var userRole in user.UserRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName.ToString()));
-            }
+            // Add role to claims for [Authorize(Roles = "...")] to work
+            claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

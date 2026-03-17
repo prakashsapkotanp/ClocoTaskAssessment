@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArtistManagementSystem.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260316134450_initial-migration")]
+    [Migration("20260317130203_initial-migration")]
     partial class initialmigration
     {
         /// <inheritdoc />
@@ -99,34 +99,6 @@ namespace ArtistManagementSystem.Server.Migrations
                     b.ToTable("music", (string)null);
                 });
 
-            modelBuilder.Entity("ArtistManagementSystem.Server.Models.RoleModel", b =>
-                {
-                    b.Property<int>("RoleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("RoleId");
-
-                    b.ToTable("role", (string)null);
-                });
-
             modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserModel", b =>
                 {
                     b.Property<int>("Id")
@@ -168,35 +140,16 @@ namespace ArtistManagementSystem.Server.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.ToTable("user", (string)null);
-                });
-
-            modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserRoleModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("ArtistManagementSystem.Server.Models.MusicModel", b =>
@@ -208,35 +161,6 @@ namespace ArtistManagementSystem.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Artist");
-                });
-
-            modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserRoleModel", b =>
-                {
-                    b.HasOne("ArtistManagementSystem.Server.Models.RoleModel", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ArtistManagementSystem.Server.Models.UserModel", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ArtistManagementSystem.Server.Models.RoleModel", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("ArtistManagementSystem.Server.Models.UserModel", b =>
-                {
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
