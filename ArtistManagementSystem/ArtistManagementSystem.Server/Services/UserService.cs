@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.DTOs;
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Models.Enums;
@@ -29,6 +29,8 @@ namespace ArtistManagementSystem.Server.Services
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Password = dto.Password,
+                Phone = dto.Phone,
+                Address = dto.Address,
                 Dob = dto.Dob,
                 Gender = Enum.Parse<Gender>(dto.Gender, true)
             };

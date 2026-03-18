@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.Models;
+using ArtistManagementSystem.Server.Models;
 
 namespace ArtistManagementSystem.Server.Interfaces
 {
@@ -10,5 +10,6 @@ namespace ArtistManagementSystem.Server.Interfaces
         Task<bool> UpdateArtistAsync(ArtistModel artist);
         Task<bool> DeleteArtistAsync(int id);
         Task<List<ArtistModel>> GetAllArtistsAsync();
+        Task<ArtistModel?> GetArtistByUserIdAsync(int userId);
     }
 }

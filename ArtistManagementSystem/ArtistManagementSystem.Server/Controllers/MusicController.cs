@@ -1,3 +1,4 @@
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,20 +23,17 @@ namespace ArtistManagementSystem.Server.Controllers
 
         [Authorize(Roles = "super_admin,artist")]
         [HttpPost]
-        public async Task<IActionResult> Create(int artistId, [FromBody] MusicModel model)
+        public async Task<IActionResult> Create(int artistId, [FromBody] MusicDto dto)
         {
-            model.ArtistId = artistId;
-            var id = await _service.CreateMusicAsync(model);
+            var id = await _service.CreateMusicAsync(artistId, dto);
             return Ok(new { Message = "Song added successfully", Id = id });
         }
 
         [Authorize(Roles = "super_admin,artist")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int artistId, int musicId, [FromBody] MusicModel model)
+        public async Task<IActionResult> Update(int artistId, int id, [FromBody] MusicDto dto)
         {
-            model.Id = musicId;
-            model.ArtistId = artistId;
-            return await _service.UpdateMusicAsync(model) ? Ok() : BadRequest();
+            return await _service.UpdateMusicAsync(artistId, id, dto) ? Ok() : BadRequest();
         }
 
         [Authorize(Roles = "super_admin,artist")]

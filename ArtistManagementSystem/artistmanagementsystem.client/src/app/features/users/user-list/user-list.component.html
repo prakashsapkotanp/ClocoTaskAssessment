@@ -1,0 +1,126 @@
+<div class="page-container">
+  <!-- Toast -->
+  <div *ngIf="toast" class="toast" [class.toast-error]="toastType === 'error'">{{ toast }}</div>
+
+  <div class="page-header">
+    <div>
+      <h2>Users</h2>
+      <p>Manage all admin user accounts.</p>
+    </div>
+    <button id="add-user-btn" class="btn btn-primary" (click)="openModal()">
+      <span class="btn-icon">+</span> Add User
+    </button>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container glass-panel">
+    <div *ngIf="loading" class="loading-row">Loading...</div>
+    <table *ngIf="!loading" id="users-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Joined Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users">
+          <td>{{ u.firstName }} {{ u.lastName }}</td>
+          <td>{{ u.email }}</td>
+          <td><span class="badge-role">{{ u?.role?.replace('_', ' ') }}</span></td>
+          <td>{{ u.createdAt | date }}</td>
+          <td class="actions">
+            <button class="btn-icon edit" (click)="openModal(u)" title="Edit">✏️</button>
+            <button class="btn btn-danger btn-sm" (click)="delete(u)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="5" class="empty-row">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="btn btn-secondary btn-sm" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+    <span class="page-info">{{ page }} / {{ totalPages }}</span>
+    <button class="btn btn-secondary btn-sm" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="showModal=false">
+    <div class="modal glass-panel" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingUser ? 'Edit User' : 'Create User' }}</h3>
+        <button class="modal-close" (click)="showModal=false">✕</button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="row-2">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" formControlName="firstName" class="input-field" />
+            <span class="error"
+              *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">Required.</span>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" formControlName="lastName" class="input-field" />
+            <span class="error" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">Required.</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" formControlName="email" class="input-field" [readonly]="!!editingUser" />
+          <span class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">Valid email
+            required.</span>
+        </div>
+        <div class="form-group" *ngIf="!editingUser">
+          <label>Password</label>
+          <input type="password" formControlName="password" class="input-field" />
+          <span class="error" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">Min 6
+            characters.</span>
+        </div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>DOB</label>
+            <input type="date" formControlName="dob" class="input-field" />
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select formControlName="gender" class="input-field">
+              <option value="">Select...</option>
+              <option value="m">Male</option>
+              <option value="f">Female</option>
+              <option value="o">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" formControlName="phone" class="input-field" />
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select formControlName="role" class="input-field">
+              <option value="super_admin">Super Admin</option>
+              <option value="artist_manager">Artist Manager</option>
+              <option value="artist">Artist</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" formControlName="address" class="input-field" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="showModal=false">Cancel</button>
+          <button type="submit" class="btn btn-primary">{{ editingUser ? 'Update' : 'Create' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
