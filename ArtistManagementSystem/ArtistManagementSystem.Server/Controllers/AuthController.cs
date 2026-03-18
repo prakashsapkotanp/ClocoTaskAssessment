@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.DTOs;
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Models.Enums;

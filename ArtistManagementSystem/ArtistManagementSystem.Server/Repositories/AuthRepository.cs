@@ -68,14 +68,16 @@ namespace ArtistManagementSystem.Server.Repositories
             try
             {
                 const string userSql = @"
-                                        INSERT INTO [user] (FirstName, LastName, Email, Password, Dob, Gender, Role, CreatedAt) 
-                                        VALUES (@FN, @LN, @Email, @Pass, @Dob, @Gender, @Role, @Created);";
+                                        INSERT INTO [user] (FirstName, LastName, Email, Password, Phone, Address, Dob, Gender, Role, CreatedAt) 
+                                        VALUES (@FN, @LN, @Email, @Pass, @Phone, @Addr, @Dob, @Gender, @Role, @Created);";
 
                 using var userCmd = new SqlCommand(userSql, connection);
                 userCmd.Parameters.AddWithValue("@FN", user.FirstName);
                 userCmd.Parameters.AddWithValue("@LN", user.LastName);
                 userCmd.Parameters.AddWithValue("@Email", user.Email);
                 userCmd.Parameters.AddWithValue("@Pass", user.Password);
+                userCmd.Parameters.AddWithValue("@Phone", (object?)user.Phone ?? DBNull.Value);
+                userCmd.Parameters.AddWithValue("@Addr", (object?)user.Address ?? DBNull.Value);
                 userCmd.Parameters.AddWithValue("@Dob", user.Dob);
                 userCmd.Parameters.AddWithValue("@Gender", user.Gender.ToString());
                 userCmd.Parameters.AddWithValue("@Role", roleName);
