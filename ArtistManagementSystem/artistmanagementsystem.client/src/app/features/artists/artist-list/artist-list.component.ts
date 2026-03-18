@@ -33,11 +33,13 @@ export class ArtistListComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       dob: ['', Validators.required],
       gender: ['', Validators.required],
       address: [''],
       firstReleaseYear: ['', [Validators.required, Validators.min(1900)]],
-      noOfAlbumsReleased: ['', [Validators.required, Validators.min(0)]]
+      noOfAlbumsReleased: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -55,8 +57,17 @@ export class ArtistListComponent implements OnInit {
 
   openModal(a?: any) {
     this.editingArtist = a;
-    if (a) this.form.patchValue({ ...a, dob: a.dob?.split('T')[0] });
-    else this.form.reset();
+    if (a) {
+      this.form.patchValue({ ...a, dob: a.dob?.split('T')[0] });
+      this.form.get('email')?.clearValidators();
+      this.form.get('password')?.clearValidators();
+    } else {
+      this.form.reset();
+      this.form.get('email')?.setValidators([Validators.required, Validators.email]);
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+    }
+    this.form.get('email')?.updateValueAndValidity();
+    this.form.get('password')?.updateValueAndValidity();
     this.showModal = true;
   }
 
@@ -103,6 +114,7 @@ export class ArtistListComponent implements OnInit {
   get totalPages() { return Math.ceil(this.totalCount / this.pageSize); }
   prevPage() { if (this.page > 1) { this.page--; this.load(); } }
   nextPage() { if (this.page < this.totalPages) { this.page++; this.load(); } }
+
 
   showToast(msg: string, type: 'success' | 'error') {
     this.toast = msg; this.toastType = type;

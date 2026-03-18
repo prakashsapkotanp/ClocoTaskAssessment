@@ -13,5 +13,6 @@ namespace ArtistManagementSystem.Server.Interfaces
         Task<byte[]> ExportToCsvAsync();
         Task<int> ImportFromCsvAsync(IFormFile file);
         Task<ArtistModel?> GetArtistByUserIdAsync(int userId);
+        Task<List<ArtistModel>> SearchArtistsByNameAsync(string name);
     }
 }

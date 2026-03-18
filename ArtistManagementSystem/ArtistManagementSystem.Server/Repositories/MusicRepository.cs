@@ -28,8 +28,8 @@ namespace ArtistManagementSystem.Server.Repositories
         public async Task<int> CreateMusicAsync(MusicModel m)
         {
             using var conn = new SqlConnection(_connectionString);
-            const string sql = @"INSERT INTO Music (ArtistId, Title, AlbumName, Genre, CreatedAt) 
-                            VALUES (@AId, @Title, @Album, @Genre, @CA); SELECT SCOPE_IDENTITY();";
+            const string sql = @"INSERT INTO Music (ArtistId, Title, AlbumName, Genre, CreatedAt, FilePath) 
+                            VALUES (@AId, @Title, @Album, @Genre, @CA, @FPath); SELECT SCOPE_IDENTITY();";
             await conn.OpenAsync();
             using var cmd = new SqlCommand(sql, conn);
             AddParams(cmd, m);
@@ -39,7 +39,7 @@ namespace ArtistManagementSystem.Server.Repositories
         public async Task<bool> UpdateMusicAsync(MusicModel m)
         {
             using var conn = new SqlConnection(_connectionString);
-            const string sql = @"UPDATE Music SET Title=@Title, AlbumName=@Album, Genre=@Genre, UpdatedAt=@UA 
+            const string sql = @"UPDATE Music SET Title=@Title, AlbumName=@Album, Genre=@Genre, UpdatedAt=@UA, FilePath=@FPath 
                             WHERE Id=@Id";
             await conn.OpenAsync();
             using var cmd = new SqlCommand(sql, conn);
@@ -75,6 +75,7 @@ namespace ArtistManagementSystem.Server.Repositories
             cmd.Parameters.AddWithValue("@Genre", m.Genre.ToString());
             cmd.Parameters.AddWithValue("@CA", DateTime.Now);
             cmd.Parameters.AddWithValue("@UA", DateTime.Now);
+            cmd.Parameters.AddWithValue("@FPath", (object?)m.FilePath ?? DBNull.Value);
         }
 
         private static MusicModel MapMusic(SqlDataReader r) => new()
@@ -85,7 +86,8 @@ namespace ArtistManagementSystem.Server.Repositories
             AlbumName = r["AlbumName"] as string,
             Genre = Enum.Parse<Genre>(r["Genre"].ToString()!),
             CreatedAt = (DateTime)r["CreatedAt"],
-            UpdatedAt = r["UpdatedAt"] as DateTime?
+            UpdatedAt = r["UpdatedAt"] as DateTime?,
+            FilePath = r["FilePath"] != DBNull.Value ? r["FilePath"].ToString() : null
         };
     }
 }

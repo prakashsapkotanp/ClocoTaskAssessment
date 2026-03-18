@@ -28,11 +28,12 @@ export class RegisterComponent {
       dob: ['', Validators.required],
       gender: ['', Validators.required],
       address: [''],
-      role: ['artist_manager', Validators.required]
+      // role: ['super_admin', Validators.required]
     });
   }
 
   onSubmit() {
+    this.form.value.role = 'super_admin'; // hardcoding since in register default role is super_admin
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading = true;
     this.error = '';

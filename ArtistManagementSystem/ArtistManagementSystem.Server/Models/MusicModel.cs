@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.Models.Enums;
+using ArtistManagementSystem.Server.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +27,8 @@ namespace ArtistManagementSystem.Server.Models
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public string? FilePath { get; set; }
 
 
     }

@@ -7,7 +7,8 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a routerLink="users" routerLinkActive="active" id="nav-users" *ngIf="role === 'super_admin'" class="nav-item">
+      <!-- Users (Admin only) -->
+      <a routerLink="users" routerLinkActive="active" *ngIf="role === 'super_admin'" class="nav-item">
         <span class="nav-icon">👥</span>
         <span>Users</span>
       </a>
@@ -20,7 +21,7 @@
         </li>
 
         <!-- Artist Role: My Songs -->
-        <li *ngIf="role === 'super_admin' || role ===  'artist' && artistId">
+        <li *ngIf="role === 'artist' && artistId">
           <a [routerLink]="['/dashboard/artists', artistId, 'songs']" routerLinkActive="active">
             <span class="nav-icon">🎵</span> My Songs
           </a>
@@ -29,7 +30,7 @@
     </nav>
 
     <!-- Artist Contact Support if no profile -->
-    <div *ngIf="role === 'super_admin' || role === 'artist' && !artistId" class="artist-notice">
+    <div *ngIf="role === 'artist' && !artistId" class="artist-notice">
       <p>Please contact your manager if you don't see your profile link.</p>
     </div>
 

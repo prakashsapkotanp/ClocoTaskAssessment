@@ -56,6 +56,12 @@ namespace ArtistManagementSystem.Server.Controllers
             var count = await _service.ImportFromCsvAsync(file);
             return Ok(new { Message = $"Imported {count} artists successfully." });
         }
+        [Authorize(Roles = "super_admin,artist_manager")]
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string name) =>
+            Ok(await _service.SearchArtistsByNameAsync(name));
+
+        [Authorize(Roles = "super_admin,artist_manager,artist")]
         [HttpGet("me/{userId}")]
         public async Task<IActionResult> GetByUserId(int userId)
         {

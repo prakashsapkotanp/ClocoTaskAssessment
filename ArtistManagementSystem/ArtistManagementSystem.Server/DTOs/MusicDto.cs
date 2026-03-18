@@ -12,5 +12,7 @@ namespace ArtistManagementSystem.Server.DTOs
         /// <summary>Rnb, Country, Classic, Rock, Jazz</summary>
         [Required]
         public string Genre { get; set; } = string.Empty;
+
+        public string? FilePath { get; set; }
     }
 }
