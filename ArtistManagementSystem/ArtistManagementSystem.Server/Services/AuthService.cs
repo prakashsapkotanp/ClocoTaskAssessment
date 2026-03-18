@@ -31,7 +31,7 @@ namespace ArtistManagementSystem.Server.Services
 
             return new AuthResponseDTO
             {
-                Email = $"{user.FirstName} {user.LastName}",
+                Email = user.Email,
                 Token = GenerateJwtToken(user),
                 Status = "Success",
                 Message = "Login successful"
