@@ -1,0 +1,54 @@
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar glass-panel">
+    <div class="sidebar-header">
+      <span class="logo-icon">🎵</span>
+      <span class="logo-text">ArtistHub</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="users" routerLinkActive="active" id="nav-users" *ngIf="role === 'super_admin'" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>Users</span>
+      </a>
+      <ul>
+        <!-- Artist Manager & Admin: Artists List -->
+        <li *ngIf="role === 'super_admin' || role === 'artist_manager'">
+          <a routerLink="/dashboard/artists" routerLinkActive="active">
+            <span class="nav-icon">🎸</span> Artists
+          </a>
+        </li>
+
+        <!-- Artist Role: My Songs -->
+        <li *ngIf="role === 'super_admin' || role ===  'artist' && artistId">
+          <a [routerLink]="['/dashboard/artists', artistId, 'songs']" routerLinkActive="active">
+            <span class="nav-icon">🎵</span> My Songs
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Artist Contact Support if no profile -->
+    <div *ngIf="role === 'super_admin' || role === 'artist' && !artistId" class="artist-notice">
+      <p>Please contact your manager if you don't see your profile link.</p>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">{{ userName.charAt(0) }}</div>
+        <div class="user-meta">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role badge-role">{{ role.replace('_', ' ') }}</span>
+        </div>
+      </div>
+      <button id="logout-btn" class="btn btn-secondary logout-btn" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

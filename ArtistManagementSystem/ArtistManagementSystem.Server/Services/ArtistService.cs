@@ -1,3 +1,4 @@
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Models.Enums;
@@ -11,11 +12,42 @@ namespace ArtistManagementSystem.Server.Services
         private readonly IArtistRepository _repo;
         public ArtistService(IArtistRepository repo) => _repo = repo;
 
-        public Task<(List<ArtistModel> Artists, int TotalCount)> GetArtistsAsync(int page, int pageSize) =>
-            _repo.GetArtistsPagedAsync(page, pageSize);
+        public async Task<(List<ArtistModel> Artists, int TotalCount)> GetArtistsAsync(int page, int pageSize) =>
+            await _repo.GetArtistsPagedAsync(page, pageSize);
 
-        public Task<int> CreateArtistAsync(ArtistModel artist) => _repo.CreateArtistAsync(artist);
-        public Task<bool> UpdateArtistAsync(ArtistModel artist) => _repo.UpdateArtistAsync(artist);
+        public Task<int> CreateArtistAsync(ArtistDto dto)
+        {
+            var artist = new ArtistModel
+            {
+                Name = dto.Name,
+                Dob = dto.Dob,
+                Gender = Enum.Parse<Gender>(dto.Gender, true),
+                Address = dto.Address,
+                FirstReleaseYear = dto.FirstReleaseYear,
+                NoOfAlbumsReleased = dto.NoOfAlbumsReleased,
+                UserId = dto.UserId,
+                CreatedAt = DateTime.UtcNow
+            };
+            return _repo.CreateArtistAsync(artist);
+        }
+
+        public async Task<bool> UpdateArtistAsync(int id, ArtistDto dto)
+        {
+            var artist = await _repo.GetArtistByIdAsync(id);
+            if (artist == null) return false;
+
+            artist.Name = dto.Name;
+            artist.Dob = dto.Dob;
+            artist.Gender = Enum.Parse<Gender>(dto.Gender, true);
+            artist.Address = dto.Address;
+            artist.FirstReleaseYear = dto.FirstReleaseYear;
+            artist.NoOfAlbumsReleased = dto.NoOfAlbumsReleased;
+            artist.UserId = dto.UserId;
+            artist.UpdatedAt = DateTime.UtcNow;
+
+            return await _repo.UpdateArtistAsync(artist);
+        }
+
         public Task<bool> DeleteArtistAsync(int id) => _repo.DeleteArtistAsync(id);
 
         public async Task<byte[]> ExportToCsvAsync()
@@ -32,36 +64,33 @@ namespace ArtistManagementSystem.Server.Services
         {
             int count = 0;
             using var stream = new StreamReader(file.OpenReadStream());
-            var header = await stream.ReadLineAsync(); // Skip header
-            while (!stream.EndOfStream)
+            await stream.ReadLineAsync(); // Skip header row
+
+            while (await stream.ReadLineAsync() is string line)
             {
-                var line = await stream.ReadLineAsync();
                 if (string.IsNullOrWhiteSpace(line)) continue;
                 
-                var values = line.Split(',');
-                if (values.Length >= 6)
-                {
-                    int offset = (values.Length == 7) ? 1 : 0; // If Id is present, shift offset by 1
-                    
-                    try {
-                        var artist = new ArtistModel
-                        {
-                            Name = values[offset],
-                            Dob = DateTime.Parse(values[offset + 1]),
-                            Gender = Enum.Parse<Gender>(values[offset + 2], true),
-                            Address = values[offset + 3],
-                            FirstReleaseYear = int.Parse(values[offset + 4]),
-                            NoOfAlbumsReleased = int.Parse(values[offset + 5]),
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        await _repo.CreateArtistAsync(artist);
-                        count++;
-                    } catch(Exception ex) {
-                        throw ex;
-                    }
-                }
+                var vals = line.Split(',');
+                if (vals.Length < 6) continue;
+
+                // Handle both "Name,Dob..." and "Id,Name,Dob..." formats
+                int i = vals.Length == 7 ? 1 : 0; 
+                
+                try {
+                    await _repo.CreateArtistAsync(new ArtistModel {
+                        Name = vals[i],
+                        Dob = DateTime.Parse(vals[i + 1]),
+                        Gender = Enum.Parse<Gender>(vals[i + 2], true),
+                        Address = vals[i + 3],
+                        FirstReleaseYear = int.Parse(vals[i + 4]),
+                        NoOfAlbumsReleased = int.Parse(vals[i + 5]),
+                        CreatedAt = DateTime.UtcNow
+                    });
+                    count++;
+                } catch { /* Skip invalid data */ }
             }
             return count;
         }
+        public Task<ArtistModel?> GetArtistByUserIdAsync(int userId) => _repo.GetArtistByUserIdAsync(userId);
     }
 }

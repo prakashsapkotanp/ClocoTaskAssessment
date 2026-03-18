@@ -19,6 +19,10 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+builder.Services.AddScoped<IMusicRepository, MusicRepository>();
+builder.Services.AddScoped<IMusicService, MusicService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,7 +51,12 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Serialize enums as strings instead of numbers
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

@@ -1,3 +1,4 @@
+using ArtistManagementSystem.Server.DTOs;
 using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -15,20 +16,26 @@ namespace ArtistManagementSystem.Server.Controllers
 
         [Authorize(Roles = "super_admin,artist_manager")]
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10) =>
-            Ok(await _service.GetArtistsAsync(page, pageSize));
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var (artists, totalCount) = await _service.GetArtistsAsync(page, pageSize);
+            return Ok(new
+            {
+                Artists = artists,
+                TotalCount = totalCount
+            });
+        }
 
         [Authorize(Roles = "super_admin,artist_manager")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ArtistModel model) =>
-            Ok(await _service.CreateArtistAsync(model));
+        public async Task<IActionResult> Create([FromBody] ArtistDto dto) =>
+            Ok(await _service.CreateArtistAsync(dto));
 
         [Authorize(Roles = "super_admin,artist_manager")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ArtistModel model)
+        public async Task<IActionResult> Update(int id, [FromBody] ArtistDto dto)
         {
-            model.Id = id;
-            return await _service.UpdateArtistAsync(model) ? Ok() : BadRequest();
+            return await _service.UpdateArtistAsync(id, dto) ? Ok() : BadRequest();
         }
 
         [Authorize(Roles = "super_admin,artist_manager")]
@@ -48,6 +55,12 @@ namespace ArtistManagementSystem.Server.Controllers
             if (file == null || file.Length == 0) return BadRequest("File is empty");
             var count = await _service.ImportFromCsvAsync(file);
             return Ok(new { Message = $"Imported {count} artists successfully." });
+        }
+        [HttpGet("me/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var artist = await _service.GetArtistByUserIdAsync(userId);
+            return artist != null ? Ok(artist) : NotFound();
         }
     }
 }

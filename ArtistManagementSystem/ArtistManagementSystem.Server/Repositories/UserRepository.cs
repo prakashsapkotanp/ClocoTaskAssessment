@@ -38,23 +38,24 @@ namespace ArtistManagementSystem.Server.Repositories
 
             var users = new List<UserModel>();
             using var reader = await dataCmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                users.Add(new UserModel
-                {
-                    Id = (int)reader["Id"],
-                    FirstName = reader["FirstName"].ToString()!,
-                    LastName = reader["LastName"].ToString()!,
-                    Email = reader["Email"].ToString()!,
-                    Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : null,
-                    Dob = (DateTime)reader["Dob"],
-                    Gender = Enum.Parse<Gender>(reader["Gender"].ToString()!, true),
-                    Role = Enum.Parse<RoleType>(reader["Role"].ToString()!, true),
-                    CreatedAt = (DateTime)reader["CreatedAt"]
-                });
-            }
+            while (await reader.ReadAsync()) users.Add(MapUser(reader));
+
             return (users, totalCount);
         }
+
+        private static UserModel MapUser(SqlDataReader r) => new()
+        {
+            Id = (int)r["Id"],
+            FirstName = r["FirstName"].ToString()!,
+            LastName = r["LastName"].ToString()!,
+            Email = r["Email"].ToString()!,
+            Phone = r["Phone"] != DBNull.Value ? r["Phone"].ToString() : null,
+            Address = r["Address"] != DBNull.Value ? r["Address"].ToString() : null,
+            Dob = (DateTime)r["Dob"],
+            Gender = Enum.Parse<Gender>(r["Gender"].ToString()!, true),
+            Role = Enum.Parse<RoleType>(r["Role"].ToString()!, true),
+            CreatedAt = (DateTime)r["CreatedAt"]
+        };
 
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDTO dto)
         {

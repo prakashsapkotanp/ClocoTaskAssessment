@@ -1,4 +1,4 @@
-﻿using ArtistManagementSystem.Server.Interfaces;
+using ArtistManagementSystem.Server.Interfaces;
 using ArtistManagementSystem.Server.Models;
 using ArtistManagementSystem.Server.Models.Enums;
 using Microsoft.Data.SqlClient;
@@ -21,19 +21,7 @@ namespace ArtistManagementSystem.Server.Repositories
 
             var list = new List<MusicModel>();
             using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                list.Add(new MusicModel
-                {
-                    Id = (int)reader["Id"],
-                    ArtistId = (int)reader["ArtistId"],
-                    Title = reader["Title"].ToString()!,
-                    AlbumName = reader["AlbumName"]?.ToString(),
-                    Genre = Enum.Parse<Genre>(reader["Genre"].ToString()!),
-                    CreatedAt = (DateTime)reader["CreatedAt"],
-                    UpdatedAt = reader["UpdatedAt"] as DateTime?
-                });
-            }
+            while (await reader.ReadAsync()) list.Add(MapMusic(reader));
             return list;
         }
 
@@ -44,11 +32,7 @@ namespace ArtistManagementSystem.Server.Repositories
                             VALUES (@AId, @Title, @Album, @Genre, @CA); SELECT SCOPE_IDENTITY();";
             await conn.OpenAsync();
             using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@AId", m.ArtistId);
-            cmd.Parameters.AddWithValue("@Title", m.Title);
-            cmd.Parameters.AddWithValue("@Album", (object?)m.AlbumName ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Genre", m.Genre.ToString());
-            cmd.Parameters.AddWithValue("@CA", DateTime.Now);
+            AddParams(cmd, m);
             return Convert.ToInt32(await cmd.ExecuteScalarAsync());
         }
 
@@ -60,10 +44,7 @@ namespace ArtistManagementSystem.Server.Repositories
             await conn.OpenAsync();
             using var cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@Id", m.Id);
-            cmd.Parameters.AddWithValue("@Title", m.Title);
-            cmd.Parameters.AddWithValue("@Album", (object?)m.AlbumName ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Genre", m.Genre.ToString());
-            cmd.Parameters.AddWithValue("@UA", DateTime.Now);
+            AddParams(cmd, m);
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
 
@@ -83,17 +64,28 @@ namespace ArtistManagementSystem.Server.Repositories
             using var cmd = new SqlCommand("SELECT * FROM Music WHERE Id = @Id", conn);
             cmd.Parameters.AddWithValue("@Id", id);
             using var reader = await cmd.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                return new MusicModel
-                {
-                    Id = (int)reader["Id"],
-                    ArtistId = (int)reader["ArtistId"],
-                    Title = reader["Title"].ToString()!,
-                    Genre = Enum.Parse<Genre>(reader["Genre"].ToString()!)
-                };
-            }
-            return null;
+            return await reader.ReadAsync() ? MapMusic(reader) : null;
         }
+
+        private static void AddParams(SqlCommand cmd, MusicModel m)
+        {
+            cmd.Parameters.AddWithValue("@AId", m.ArtistId);
+            cmd.Parameters.AddWithValue("@Title", m.Title);
+            cmd.Parameters.AddWithValue("@Album", (object?)m.AlbumName ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Genre", m.Genre.ToString());
+            cmd.Parameters.AddWithValue("@CA", DateTime.Now);
+            cmd.Parameters.AddWithValue("@UA", DateTime.Now);
+        }
+
+        private static MusicModel MapMusic(SqlDataReader r) => new()
+        {
+            Id = (int)r["Id"],
+            ArtistId = (int)r["ArtistId"],
+            Title = r["Title"].ToString()!,
+            AlbumName = r["AlbumName"] as string,
+            Genre = Enum.Parse<Genre>(r["Genre"].ToString()!),
+            CreatedAt = (DateTime)r["CreatedAt"],
+            UpdatedAt = r["UpdatedAt"] as DateTime?
+        };
     }
 }
