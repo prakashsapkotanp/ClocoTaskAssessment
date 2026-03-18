@@ -60,7 +60,7 @@ namespace ArtistManagementSystem.Server.Repositories
             var count = (int)await command.ExecuteScalarAsync()!;
             return count > 0;
         }
-        public async Task<bool> RegisterUserAsync(UserModel user, string roleName)
+        public async Task<int> RegisterUserAsync(UserModel user, string roleName)
         {
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
@@ -69,7 +69,8 @@ namespace ArtistManagementSystem.Server.Repositories
             {
                 const string userSql = @"
                                         INSERT INTO [user] (FirstName, LastName, Email, Password, Phone, Address, Dob, Gender, Role, CreatedAt) 
-                                        VALUES (@FN, @LN, @Email, @Pass, @Phone, @Addr, @Dob, @Gender, @Role, @Created);";
+                                        VALUES (@FN, @LN, @Email, @Pass, @Phone, @Addr, @Dob, @Gender, @Role, @Created);
+                                        SELECT SCOPE_IDENTITY();";
 
                 using var userCmd = new SqlCommand(userSql, connection);
                 userCmd.Parameters.AddWithValue("@FN", user.FirstName);
@@ -83,9 +84,8 @@ namespace ArtistManagementSystem.Server.Repositories
                 userCmd.Parameters.AddWithValue("@Role", roleName);
                 userCmd.Parameters.AddWithValue("@Created", user.CreatedAt);
 
-                await userCmd.ExecuteNonQueryAsync();
-
-                return true;
+                var result = await userCmd.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
             }
             catch (Exception e)
             {

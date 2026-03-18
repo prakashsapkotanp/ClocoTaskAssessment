@@ -17,7 +17,13 @@ namespace ArtistManagementSystem.Server.DTOs
         public int FirstReleaseYear { get; set; }
 
         public int NoOfAlbumsReleased { get; set; }
- 
-        public int? UserId { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
     }
 }

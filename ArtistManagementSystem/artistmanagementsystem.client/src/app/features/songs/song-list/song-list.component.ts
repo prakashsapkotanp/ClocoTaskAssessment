@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MusicService } from '../../../core/services/music';
+import { ArtistService } from '../../../core/services/artist';
 import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-song-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './song-list.component.html',
   styleUrls: ['./song-list.component.css']
 })
@@ -24,8 +25,11 @@ export class SongListComponent implements OnInit {
   toastType: 'success' | 'error' = 'success';
   genres = ['Rnb', 'Country', 'Classic', 'Rock', 'Jazz'];
 
+  selectedFile: File | null = null;
+
   constructor(
     private musicService: MusicService,
+    private artistService: ArtistService,
     public authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
@@ -53,8 +57,13 @@ export class SongListComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   openModal(s?: any) {
     this.editingSong = s;
+    this.selectedFile = null;
     if (s) this.form.patchValue(s);
     else this.form.reset();
     this.showModal = true;
@@ -62,12 +71,33 @@ export class SongListComponent implements OnInit {
 
   save() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    
+    this.loading = true;
     const action = this.editingSong
       ? this.musicService.updateSong(this.artistId, this.editingSong.id, this.form.value)
-      : this.musicService.createSong(this.artistId, this.form.value);
+      : this.musicService.createSong(this.artistId, this.form.value, this.selectedFile || undefined);
+      
     action.subscribe({
-      next: () => { this.showToast('Saved!', 'success'); this.showModal = false; this.load(); },
-      error: (err) => this.showToast(err.error?.message || 'Error saving song.', 'error')
+      next: () => { 
+        this.showToast('Saved!', 'success'); 
+        this.showModal = false; 
+        this.load(); 
+      },
+      error: (err: any) => { 
+        this.loading = false;
+        this.showToast(err.error?.message || 'Error saving song.', 'error');
+      }
+    });
+  }
+
+  download(s: any) {
+    this.musicService.downloadSong(this.artistId, s.id).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${s.title}.mp3`;
+      a.click();
+      URL.revokeObjectURL(url);
     });
   }
 

@@ -97,6 +97,20 @@ namespace ArtistManagementSystem.Server.Repositories
             return await reader.ReadAsync() ? MapArtist(reader) : null;
         }
 
+        public async Task<List<ArtistModel>> SearchArtistsByNameAsync(string name)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            const string sql = "SELECT * FROM [artist] WHERE Name LIKE @Name + '%' ORDER BY Name";
+            await conn.OpenAsync();
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@Name", name);
+            
+            var list = new List<ArtistModel>();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync()) list.Add(MapArtist(reader));
+            return list;
+        }
+
         private static void AddParams(SqlCommand cmd, ArtistModel a)
         {
             cmd.Parameters.AddWithValue("@Name", a.Name);

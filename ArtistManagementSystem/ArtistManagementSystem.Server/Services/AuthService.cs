@@ -53,7 +53,8 @@ namespace ArtistManagementSystem.Server.Services
             user.CreatedAt = DateTime.UtcNow;
 
 
-            bool isSaved = await _repository.RegisterUserAsync(user, roleName);
+            int userId = await _repository.RegisterUserAsync(user, roleName);
+            bool isSaved = userId > 0;
 
             if (!isSaved)
             {

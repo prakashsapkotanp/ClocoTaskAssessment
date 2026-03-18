@@ -7,7 +7,9 @@ namespace ArtistManagementSystem.Server.Interfaces
     {
         Task<List<MusicModel>> GetMusicByArtistAsync(int artistId);
         Task<int> CreateMusicAsync(int artistId, MusicDto dto);
+        Task<int> CreateMusicWithFileAsync(int artistId, MusicDto dto, IFormFile file);
         Task<bool> UpdateMusicAsync(int artistId, int id, MusicDto dto);
         Task<bool> DeleteMusicAsync(int id);
+        Task<(byte[] Bytes, string ContentType, string FileName)?> GetMusicFileAsync(int id);
     }
 }

@@ -10,6 +10,7 @@ namespace ArtistManagementSystem.Server.Interfaces
         Task<bool> UpdateArtistAsync(ArtistModel artist);
         Task<bool> DeleteArtistAsync(int id);
         Task<List<ArtistModel>> GetAllArtistsAsync();
+        Task<List<ArtistModel>> SearchArtistsByNameAsync(string name);
         Task<ArtistModel?> GetArtistByUserIdAsync(int userId);
     }
 }

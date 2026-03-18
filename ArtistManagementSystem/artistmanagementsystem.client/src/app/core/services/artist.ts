@@ -33,6 +33,11 @@ export class ArtistService {
     return this.http.post<any>(`${this.API}/import`, formData);
   }
 
+
+  searchArtists(name: string) {
+    return this.http.get<any[]>(`${this.API}/search?name=${name}`);
+  }
+
   getArtistByUserId(userId: number) {
     return this.http.get<any>(`${this.API}/me/${userId}`);
   }

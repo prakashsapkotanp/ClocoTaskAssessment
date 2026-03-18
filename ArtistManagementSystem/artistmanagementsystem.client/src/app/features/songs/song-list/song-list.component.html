@@ -6,10 +6,10 @@
       <button class="btn btn-secondary btn-icon" (click)="goBack()">← Back</button>
       <div>
         <h2>Songs</h2>
-        <p>Artist ID: {{ artistId }}</p>
+        <p *ngIf="artistId > 0">Artist ID: {{ artistId }}</p>
       </div>
     </div>
-    <button *ngIf="role === 'artist'" id="create-song-btn" class="btn btn-primary" (click)="openModal()">+ Add Song</button>
+    <button *ngIf="role === 'super_admin' || role === 'artist'" id="create-song-btn" class="btn btn-primary" (click)="openModal()">+ Add Song</button>
   </div>
 
   <div class="table-container">
@@ -30,13 +30,16 @@
           <td>{{ s.albumName || '—' }}</td>
           <td><span class="badge badge-genre">{{ s.genre }}</span></td>
           <td>{{ s.createdAt | date:'mediumDate' }}</td>
-          <td *ngIf="role === 'artist'" class="actions">
-            <button class="btn btn-secondary btn-sm" (click)="openModal(s)">Edit</button>
-            <button class="btn btn-danger btn-sm" (click)="delete(s)">Delete</button>
+          <td class="actions">
+            <button *ngIf="s.filePath" class="btn btn-secondary btn-sm" (click)="download(s)">Download MP3</button>
+            <ng-container *ngIf="role === 'super_admin' || role === 'artist'">
+              <button class="btn btn-secondary btn-sm" (click)="openModal(s)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="delete(s)">Delete</button>
+            </ng-container>
           </td>
         </tr>
         <tr *ngIf="songs.length === 0">
-          <td [attr.colspan]="role === 'artist' ? 5 : 4" class="empty-row">No songs yet.</td>
+          <td [attr.colspan]="'5'" class="empty-row">No songs yet.</td>
         </tr>
       </tbody>
     </table>
@@ -50,26 +53,36 @@
         <button class="modal-close" (click)="showModal=false">✕</button>
       </div>
       <form [formGroup]="form" (ngSubmit)="save()">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" formControlName="title" class="input-field" placeholder="Song title" />
-          <span class="error" *ngIf="form.get('title')?.invalid && form.get('title')?.touched">Required.</span>
+        <div class="song-fields">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" formControlName="title" class="input-field" placeholder="Song title" />
+            <span class="error" *ngIf="form.get('title')?.invalid && form.get('title')?.touched">Required.</span>
+          </div>
+          <div class="form-group">
+            <label>Album Name (optional)</label>
+            <input type="text" formControlName="albumName" class="input-field" placeholder="Album name" />
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <select formControlName="genre" class="input-field">
+              <option value="">Select genre...</option>
+              <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+            </select>
+            <span class="error" *ngIf="form.get('genre')?.invalid && form.get('genre')?.touched">Required.</span>
+          </div>
+          <div class="form-group" *ngIf="!editingSong">
+            <label>MP3 File</label>
+            <input type="file" (change)="onFileSelected($event)" accept=".mp3" class="input-field" />
+            <p class="help-text">Select an MP3 file to upload.</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Album Name (optional)</label>
-          <input type="text" formControlName="albumName" class="input-field" placeholder="Album name" />
-        </div>
-        <div class="form-group">
-          <label>Genre</label>
-          <select formControlName="genre" class="input-field">
-            <option value="">Select genre...</option>
-            <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
-          </select>
-          <span class="error" *ngIf="form.get('genre')?.invalid && form.get('genre')?.touched">Required.</span>
-        </div>
+
         <div class="modal-actions">
           <button type="button" class="btn btn-secondary" (click)="showModal=false">Cancel</button>
-          <button type="submit" class="btn btn-primary">{{ editingSong ? 'Update' : 'Create' }}</button>
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            {{ editingSong ? 'Update' : 'Create' }}
+          </button>
         </div>
       </form>
     </div>

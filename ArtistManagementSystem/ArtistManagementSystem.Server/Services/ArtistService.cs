@@ -10,13 +10,42 @@ namespace ArtistManagementSystem.Server.Services
     public class ArtistService : IArtistService
     {
         private readonly IArtistRepository _repo;
-        public ArtistService(IArtistRepository repo) => _repo = repo;
+        private readonly IAuthRepository _authRepo;
+        public ArtistService(IArtistRepository repo, IAuthRepository authRepo)
+        {
+            _repo = repo;
+            _authRepo = authRepo;
+        }
 
         public async Task<(List<ArtistModel> Artists, int TotalCount)> GetArtistsAsync(int page, int pageSize) =>
             await _repo.GetArtistsPagedAsync(page, pageSize);
 
-        public Task<int> CreateArtistAsync(ArtistDto dto)
+        public async Task<int> CreateArtistAsync(ArtistDto dto)
         {
+
+           
+
+
+            // 1. Create User
+            var user = new UserModel
+            {
+                FirstName = dto.Name,
+                LastName = "Artist",
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Dob = dto.Dob,
+                Gender = Enum.Parse<Gender>(dto.Gender, true),
+                Address = dto.Address,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            if (await _authRepo.UserExistsAsync(user.Email))
+            {
+                throw new InvalidOperationException("Email is already registered");
+            }
+            var userId = await _authRepo.RegisterUserAsync(user, "artist");
+
+            // 2. Create Artist linked to User
             var artist = new ArtistModel
             {
                 Name = dto.Name,
@@ -25,10 +54,10 @@ namespace ArtistManagementSystem.Server.Services
                 Address = dto.Address,
                 FirstReleaseYear = dto.FirstReleaseYear,
                 NoOfAlbumsReleased = dto.NoOfAlbumsReleased,
-                UserId = dto.UserId,
+                UserId = userId,
                 CreatedAt = DateTime.UtcNow
             };
-            return _repo.CreateArtistAsync(artist);
+            return await _repo.CreateArtistAsync(artist);
         }
 
         public async Task<bool> UpdateArtistAsync(int id, ArtistDto dto)
@@ -42,7 +71,6 @@ namespace ArtistManagementSystem.Server.Services
             artist.Address = dto.Address;
             artist.FirstReleaseYear = dto.FirstReleaseYear;
             artist.NoOfAlbumsReleased = dto.NoOfAlbumsReleased;
-            artist.UserId = dto.UserId;
             artist.UpdatedAt = DateTime.UtcNow;
 
             return await _repo.UpdateArtistAsync(artist);
@@ -91,6 +119,9 @@ namespace ArtistManagementSystem.Server.Services
             }
             return count;
         }
+
         public Task<ArtistModel?> GetArtistByUserIdAsync(int userId) => _repo.GetArtistByUserIdAsync(userId);
+
+        public Task<List<ArtistModel>> SearchArtistsByNameAsync(string name) => _repo.SearchArtistsByNameAsync(name);
     }
 }

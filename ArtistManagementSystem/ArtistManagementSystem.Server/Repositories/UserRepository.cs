@@ -89,5 +89,17 @@ namespace ArtistManagementSystem.Server.Repositories
 
             return await cmd.ExecuteNonQueryAsync() > 0;
         }
+        public async Task<UserModel?> GetUserByEmailAndRoleAsync(string email, RoleType role)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            const string sql = "SELECT * FROM [user] WHERE Email = @Email AND Role = @Role";
+            await connection.OpenAsync();
+            using var cmd = new SqlCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@Email", email);
+            cmd.Parameters.AddWithValue("@Role", role.ToString());
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            return await reader.ReadAsync() ? MapUser(reader) : null;
+        }
     }
 }

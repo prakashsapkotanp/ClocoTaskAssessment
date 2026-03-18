@@ -13,7 +13,15 @@ export class MusicService {
     return this.http.get<any[]>(this.base(artistId));
   }
 
-  createSong(artistId: number, data: any) {
+  createSong(artistId: number, data: any, file?: File) {
+    if (file) {
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('albumName', data.albumName || '');
+      formData.append('genre', data.genre);
+      formData.append('file', file);
+      return this.http.post<any>(this.base(artistId), formData);
+    }
     return this.http.post<any>(this.base(artistId), data);
   }
 
@@ -23,5 +31,9 @@ export class MusicService {
 
   deleteSong(artistId: number, id: number) {
     return this.http.delete<any>(`${this.base(artistId)}/${id}`);
+  }
+
+  downloadSong(artistId: number, id: number) {
+    return this.http.get(`${this.base(artistId)}/${id}/download`, { responseType: 'blob' });
   }
 }
