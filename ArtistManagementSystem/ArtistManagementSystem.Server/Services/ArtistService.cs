@@ -29,9 +29,10 @@ namespace ArtistManagementSystem.Server.Services
             // 1. Create User
             var user = new UserModel
             {
-                FirstName = dto.Name,
-                LastName = "Artist",
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Email = dto.Email,
+                Phone = dto.Phone,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Dob = dto.Dob,
                 Gender = Enum.Parse<Gender>(dto.Gender, true),
@@ -48,7 +49,7 @@ namespace ArtistManagementSystem.Server.Services
             // 2. Create Artist linked to User
             var artist = new ArtistModel
             {
-                Name = dto.Name,
+                Name = $"{dto.FirstName} {dto.LastName}",
                 Dob = dto.Dob,
                 Gender = Enum.Parse<Gender>(dto.Gender, true),
                 Address = dto.Address,
@@ -65,7 +66,7 @@ namespace ArtistManagementSystem.Server.Services
             var artist = await _repo.GetArtistByIdAsync(id);
             if (artist == null) return false;
 
-            artist.Name = dto.Name;
+            artist.Name = $"{dto.FirstName} {dto.LastName}";
             artist.Dob = dto.Dob;
             artist.Gender = Enum.Parse<Gender>(dto.Gender, true);
             artist.Address = dto.Address;

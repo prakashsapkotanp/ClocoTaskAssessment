@@ -6,10 +6,11 @@
       <button class="btn btn-secondary btn-icon" (click)="goBack()">← Back</button>
       <div>
         <h2>Songs</h2>
-        <p *ngIf="artistId > 0">Artist ID: {{ artistId }}</p>
+        <p *ngIf="artistId > 0">Artist: {{ artistName }}</p>
       </div>
     </div>
-    <button *ngIf="role === 'super_admin' || role === 'artist'" id="create-song-btn" class="btn btn-primary" (click)="openModal()">+ Add Song</button>
+    <button *ngIf="role === 'super_admin' || role === 'artist'" id="create-song-btn" class="btn btn-primary"
+      (click)="openModal()">+ Add Song</button>
   </div>
 
   <div class="table-container">
@@ -33,7 +34,7 @@
           <td class="actions">
             <button *ngIf="s.filePath" class="btn btn-secondary btn-sm" (click)="download(s)">Download MP3</button>
             <ng-container *ngIf="role === 'super_admin' || role === 'artist'">
-              <button class="btn btn-secondary btn-sm" (click)="openModal(s)">Edit</button>
+              <button class="btn btn-secondary btn-sm" (click)="openModal(s)">✏️</button>
               <button class="btn btn-danger btn-sm" (click)="delete(s)">Delete</button>
             </ng-container>
           </td>

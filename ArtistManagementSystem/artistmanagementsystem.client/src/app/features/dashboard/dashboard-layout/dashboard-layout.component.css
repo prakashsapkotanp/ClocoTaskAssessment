@@ -8,10 +8,7 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  border-radius: 0;
-  border-left: none;
-  border-top: none;
-  border-bottom: none;
+  background: var(--bg-subtle);
   border-right: 1px solid var(--border-color);
   position: sticky;
   top: 0;
@@ -28,15 +25,15 @@
   margin-bottom: 1.5rem;
 }
 
-.logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 8px var(--primary)); }
+.logo-icon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px var(--primary));
+}
 
 .logo-text {
   font-size: 1.2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .sidebar-nav {
@@ -60,17 +57,18 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-main);
 }
 
 .nav-item.active {
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(0, 102, 204, 0.1);
   color: var(--primary);
-  box-shadow: inset 2px 0 0 var(--primary);
 }
 
-.nav-icon { font-size: 1.1rem; }
+.nav-icon {
+  font-size: 1.1rem;
+}
 
 .sidebar-footer {
   padding-top: 1.5rem;
@@ -97,7 +95,11 @@
   text-transform: uppercase;
 }
 
-.user-meta { display: flex; flex-direction: column; overflow: hidden; }
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
 .user-name {
   font-size: 0.9rem;
@@ -114,7 +116,9 @@
   text-transform: capitalize;
 }
 
-.logout-btn { width: 100%; }
+.logout-btn {
+  width: 100%;
+}
 
 .sidebar-nav ul {
   list-style: none;
@@ -125,8 +129,8 @@
 .artist-notice {
   margin-top: auto;
   padding: 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(0, 102, 204, 0.05);
+  border: 1px solid rgba(0, 102, 204, 0.1);
   border-radius: var(--radius-md);
   color: var(--text-main);
   font-size: 0.85rem;

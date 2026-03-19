@@ -32,7 +32,8 @@ export class ArtistListComponent implements OnInit {
     private router: Router
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       dob: ['', Validators.required],
@@ -58,7 +59,10 @@ export class ArtistListComponent implements OnInit {
   openModal(a?: any) {
     this.editingArtist = a;
     if (a) {
-      this.form.patchValue({ ...a, dob: a.dob?.split('T')[0] });
+      const parts = a.name.split(' ');
+      const firstName = parts[0] || '';
+      const lastName = parts.slice(1).join(' ') || '';
+      this.form.patchValue({ ...a, firstName, lastName, dob: a.dob?.split('T')[0] });
       this.form.get('email')?.clearValidators();
       this.form.get('password')?.clearValidators();
     } else {

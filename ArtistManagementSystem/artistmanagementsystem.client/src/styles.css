@@ -1,24 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette - Premium Dark */
-  --bg-main: #0a0a0c;
-  --bg-card: rgba(20, 20, 25, 0.6);
-  --bg-card-hover: rgba(30, 30, 40, 0.8);
+  /* Color Palette - Premium Light */
+  --bg-main: #FFFFFF;
+  --bg-subtle: #F5F5F7;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FBFBFD;
   
-  --primary: #6366f1; /* Indigo */
-  --primary-hover: #4f46e5;
-  --primary-glow: rgba(99, 102, 241, 0.4);
+  --primary: #0066CC; /* Science Blue */
+  --primary-hover: #0077ED;
+  --primary-glow: rgba(0, 102, 204, 0.15);
   
-  --secondary: #ec4899; /* Pink */
+  --secondary: #86868B; /* Space Gray */
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-main: #1D1D1F; /* Shark */
+  --text-muted: #86868B;
   
-  --danger: #ef4444;
-  --success: #10b981;
+  --danger: #FF3B30;
+  --success: #34C759;
   
-  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(0, 0, 0, 0.1);
   
   /* Utilities */
   --radius-sm: 8px;
@@ -35,15 +36,12 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-main);
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg-subtle);
   color: var(--text-main);
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.05), transparent 25%);
 }
 
 /* Glassmorphism Classes */
@@ -68,6 +66,11 @@ p {
   line-height: 1.6;
 }
 
+sup {
+  color: var(--danger);
+  font-weight: 600;
+}
+
 /* Base Inputs & Buttons */
 .input-field {
   width: 100%;
@@ -86,6 +89,20 @@ p {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-glow);
   background: rgba(0, 0, 0, 0.4);
+}
+
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2386868B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+select.input-field option {
+  background: var(--bg-card);
+  color: var(--text-main);
 }
 
 .btn {

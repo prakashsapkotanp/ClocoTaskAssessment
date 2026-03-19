@@ -71,19 +71,19 @@ export class SongListComponent implements OnInit {
 
   save() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    
+
     this.loading = true;
     const action = this.editingSong
       ? this.musicService.updateSong(this.artistId, this.editingSong.id, this.form.value)
       : this.musicService.createSong(this.artistId, this.form.value, this.selectedFile || undefined);
-      
+
     action.subscribe({
-      next: () => { 
-        this.showToast('Saved!', 'success'); 
-        this.showModal = false; 
-        this.load(); 
+      next: () => {
+        this.showToast('Saved!', 'success');
+        this.showModal = false;
+        this.load();
       },
-      error: (err: any) => { 
+      error: (err: any) => {
         this.loading = false;
         this.showToast(err.error?.message || 'Error saving song.', 'error');
       }
