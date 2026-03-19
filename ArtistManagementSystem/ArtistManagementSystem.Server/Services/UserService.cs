@@ -40,6 +40,10 @@ namespace ArtistManagementSystem.Server.Services
 
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDTO dto)
         {
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                dto.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            }
             return await _userRepository.UpdateUserAsync(id, dto);
         }
 

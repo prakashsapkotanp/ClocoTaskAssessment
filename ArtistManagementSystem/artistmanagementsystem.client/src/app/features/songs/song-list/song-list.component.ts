@@ -17,6 +17,7 @@ import { AuthService } from '../../../core/services/auth';
 export class SongListComponent implements OnInit {
   songs: any[] = [];
   artistId!: number;
+  artistName: string = '';
   loading = false;
   showModal = false;
   editingSong: any = null;
@@ -46,6 +47,9 @@ export class SongListComponent implements OnInit {
 
   ngOnInit() {
     this.artistId = Number(this.route.snapshot.paramMap.get('artistId'));
+    if (history.state && history.state.artistName) {
+      this.artistName = history.state.artistName;
+    }
     this.load();
   }
 

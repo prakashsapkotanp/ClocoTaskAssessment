@@ -11,10 +11,12 @@ namespace ArtistManagementSystem.Server.Services
     {
         private readonly IArtistRepository _repo;
         private readonly IAuthRepository _authRepo;
-        public ArtistService(IArtistRepository repo, IAuthRepository authRepo)
+        private readonly IUserRepository _userRepo;
+        public ArtistService(IArtistRepository repo, IAuthRepository authRepo, IUserRepository userRepo)
         {
             _repo = repo;
             _authRepo = authRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<(List<ArtistModel> Artists, int TotalCount)> GetArtistsAsync(int page, int pageSize) =>
@@ -74,6 +76,21 @@ namespace ArtistManagementSystem.Server.Services
             artist.NoOfAlbumsReleased = dto.NoOfAlbumsReleased;
             artist.UpdatedAt = DateTime.UtcNow;
 
+            if (!string.IsNullOrWhiteSpace(dto.Password) && artist.UserId > 0)
+            {
+                var userUpdate = new UserUpdateDTO
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Phone = dto.Phone,
+                    Address = dto.Address,
+                    Dob = dto.Dob,
+                    Gender = dto.Gender,
+                    Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+                };
+                await _userRepo.UpdateUserAsync((int)artist.UserId, userUpdate);
+            }
+
             return await _repo.UpdateArtistAsync(artist);
         }
 
@@ -93,30 +110,87 @@ namespace ArtistManagementSystem.Server.Services
         {
             int count = 0;
             using var stream = new StreamReader(file.OpenReadStream());
-            await stream.ReadLineAsync(); // Skip header row
+            var headerLine = await stream.ReadLineAsync(); // Read header row
+            if (string.IsNullOrWhiteSpace(headerLine)) throw new ArgumentException("CSV file is empty or missing headers.");
+
+            var headers = headerLine.Split(',').Select(h => h.Trim().ToLower()).ToList();
+            var emailIdx = headers.IndexOf("email");
+            var passIdx = headers.IndexOf("password");
+
+            if (emailIdx == -1 || passIdx == -1)
+                throw new ArgumentException("Email and Password columns are missing in the CSV file.");
+
+            var nameIdx = headers.IndexOf("name");
+            var dobIdx = headers.IndexOf("dob");
+            var genderIdx = headers.IndexOf("gender");
+            var addressIdx = headers.IndexOf("address");
+            var fryIdx = headers.IndexOf("firstreleaseyear");
+            var albumsIdx = headers.IndexOf("albums");
+
+            if (nameIdx == -1 || dobIdx == -1 || genderIdx == -1 || fryIdx == -1 || albumsIdx == -1)
+                throw new ArgumentException("Required columns (Name, Dob, Gender, FirstReleaseYear, Albums) are missing.");
 
             while (await stream.ReadLineAsync() is string line)
             {
                 if (string.IsNullOrWhiteSpace(line)) continue;
                 
                 var vals = line.Split(',');
-                if (vals.Length < 6) continue;
-
-                // Handle both "Name,Dob..." and "Id,Name,Dob..." formats
-                int i = vals.Length == 7 ? 1 : 0; 
                 
                 try {
+                    var name = vals[nameIdx].Trim();
+                    var nameParts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    var firstName = nameParts.Length > 0 ? nameParts[0] : "Artist";
+                    var lastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "Unknown";
+                    var dob = DateTime.Parse(vals[dobIdx]);
+                    var gender = Enum.Parse<Gender>(vals[genderIdx], true);
+                    var address = addressIdx != -1 && addressIdx < vals.Length ? vals[addressIdx]?.Trim() : null;
+                    var email = emailIdx < vals.Length ? vals[emailIdx].Trim() : "";
+                    var password = passIdx < vals.Length ? vals[passIdx].Trim() : "";
+
+                    if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password)) continue;
+
+                    if (!email.Contains("@"))
+                    {
+                        throw new ArgumentException($"Invalid email format: '{email}'. It must contain '@'.");
+                    }
+
+                    if (await _authRepo.UserExistsAsync(email))
+                    {
+                        throw new ArgumentException($"Email '{email}' is already registered. Import aborted.");
+                    }
+
+                    var user = new UserModel
+                    {
+                        FirstName = firstName,
+                        LastName = lastName,
+                        Email = email,
+                        Phone = null,
+                        Password = BCrypt.Net.BCrypt.HashPassword(password),
+                        Dob = dob,
+                        Gender = gender,
+                        Address = address,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    int userId = await _authRepo.RegisterUserAsync(user, "artist");
+
                     await _repo.CreateArtistAsync(new ArtistModel {
-                        Name = vals[i],
-                        Dob = DateTime.Parse(vals[i + 1]),
-                        Gender = Enum.Parse<Gender>(vals[i + 2], true),
-                        Address = vals[i + 3],
-                        FirstReleaseYear = int.Parse(vals[i + 4]),
-                        NoOfAlbumsReleased = int.Parse(vals[i + 5]),
+                        Name = name,
+                        Dob = dob,
+                        Gender = gender,
+                        Address = address,
+                        FirstReleaseYear = int.Parse(vals[fryIdx]),
+                        NoOfAlbumsReleased = int.Parse(vals[albumsIdx]),
+                        UserId = userId,
                         CreatedAt = DateTime.UtcNow
                     });
                     count++;
-                } catch { /* Skip invalid data */ }
+                } 
+                catch (ArgumentException)
+                {
+                    throw; // Rethrow business validation errors
+                }
+                catch { /* Skip invalid data from parsing failures */ }
             }
             return count;
         }

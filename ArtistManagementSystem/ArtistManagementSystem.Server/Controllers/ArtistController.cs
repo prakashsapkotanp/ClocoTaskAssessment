@@ -52,9 +52,16 @@ namespace ArtistManagementSystem.Server.Controllers
         [HttpPost("import")]
         public async Task<IActionResult> Import(IFormFile file)
         {
-            if (file == null || file.Length == 0) return BadRequest("File is empty");
-            var count = await _service.ImportFromCsvAsync(file);
-            return Ok(new { Message = $"Imported {count} artists successfully." });
+            if (file == null || file.Length == 0) return BadRequest(new { message = "File is empty" });
+            try
+            {
+                var count = await _service.ImportFromCsvAsync(file);
+                return Ok(new { message = $"Imported {count} artists successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
         [Authorize(Roles = "super_admin,artist_manager")]
         [HttpGet("search")]
