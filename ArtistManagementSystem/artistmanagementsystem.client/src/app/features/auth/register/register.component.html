@@ -16,19 +16,19 @@
       <div class="row-2">
         <div class="form-group">
           <label>First Name<sup>*</sup></label>
-          <input type="text" formControlName="firstName" class="input-field" placeholder="John" />
+          <input type="text" formControlName="firstName" class="input-field" placeholder="first name" />
           <span class="error" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">Required.</span>
         </div>
         <div class="form-group">
           <label>Last Name<sup>*</sup></label>
-          <input type="text" formControlName="lastName" class="input-field" placeholder="Doe" />
+          <input type="text" formControlName="lastName" class="input-field" placeholder="last name" />
           <span class="error" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">Required.</span>
         </div>
       </div>
 
       <div class="form-group">
         <label>Email<sup>*</sup></label>
-        <input id="reg-email" type="email" formControlName="email" class="input-field" placeholder="you@example.com" />
+        <input id="reg-email" type="email" formControlName="email" class="input-field" placeholder="email address" />
         <span class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">Valid email
           required.</span>
       </div>
@@ -36,7 +36,7 @@
       <div class="form-group">
         <label>Password<sup>*</sup></label>
         <input id="reg-password" type="password" formControlName="password" class="input-field"
-          placeholder="Min 6 characters" />
+          placeholder="password" />
         <span class="error" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">Min 6
           characters.</span>
       </div>
@@ -62,13 +62,16 @@
       <div class="row-2">
         <div class="form-group">
           <label>Phone (optional)</label>
-          <input type="text" formControlName="phone" class="input-field" placeholder="+1 555 000 0000" />
+          <input type="text" formControlName="phone" class="input-field" placeholder="phone number" />
+          <span class="error" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
+            Phone number must be exactly 10 digits.
+          </span>
         </div>
       </div>
 
       <div class="form-group">
         <label>Address (optional)</label>
-        <input type="text" formControlName="address" class="input-field" placeholder="123 Main St" />
+        <input type="text" formControlName="address" class="input-field" placeholder="address" />
       </div>
 
       <button id="reg-submit" type="submit" class="btn btn-primary full-width" [disabled]="loading">

@@ -1,0 +1,34 @@
+<div class="welcome-container">
+    <h1 class="welcome-title">Welcome, {{ userName }}!</h1>
+
+    <div class="info-card glass-panel artist-card" *ngIf="role === 'artist'">
+        <div class="card-header">
+            <span class="card-icon">🎵</span>
+            <h3>Artist Dashboard</h3>
+        </div>
+        <p class="card-desc">
+            Welcome to your personal music space. Here you can upload, edit, and organize your songs.
+        </p>
+
+        <div *ngIf="artistId" class="card-actions">
+            <a [routerLink]="['/dashboard/artists', artistId, 'songs']" class="btn btn-primary">
+                Manage My Songs
+            </a>
+        </div>
+
+        <div *ngIf="!artistId" class="notice-box">
+            <p>
+                <strong>Profile Pending:</strong> Your artist profile hasn't been linked by a manager yet. Please
+                contact your administrator to set up your profile so you can start managing songs.
+            </p>
+        </div>
+    </div>
+
+    <div class="info-card glass-panel" *ngIf="role !== 'artist'">
+        <div class="card-header">
+            <span class="card-icon">⚙️</span>
+            <h3>System Management</h3>
+        </div>
+        <p>Use the sidebar navigation to manage user accounts, artist profiles, and the global music database.</p>
+    </div>
+</div>

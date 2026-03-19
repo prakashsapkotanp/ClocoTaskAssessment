@@ -24,7 +24,7 @@ export class RegisterComponent {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      phone: [''],
+      phone: ['', Validators.pattern('^[0-9]{10}$')],
       dob: ['', Validators.required],
       gender: ['', Validators.required],
       address: [''],

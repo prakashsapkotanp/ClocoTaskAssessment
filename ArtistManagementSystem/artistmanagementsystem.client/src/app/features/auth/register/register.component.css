@@ -40,9 +40,15 @@
   letter-spacing: 0.1em;
 }
 
-h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
 
-.auth-subtitle { margin-bottom: 1.5rem; font-size: 0.9rem; }
+.auth-subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
 
 .row-2 {
   display: grid;
@@ -50,7 +56,10 @@ h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
   gap: 1rem;
 }
 
-.full-width { width: 100%; margin-top: 0.5rem; }
+.full-width {
+  width: 100%;
+  margin-top: 0.5rem;
+}
 
 .alert-error {
   background: rgba(239, 68, 68, 0.1);
@@ -83,14 +92,24 @@ h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
   text-decoration: none;
   font-weight: 500;
 }
-.auth-footer a:hover { text-decoration: underline; }
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
 
 select.input-field option {
-  background: #1a1a2e;
+  background: #e5e5e8;
   color: var(--text-main);
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

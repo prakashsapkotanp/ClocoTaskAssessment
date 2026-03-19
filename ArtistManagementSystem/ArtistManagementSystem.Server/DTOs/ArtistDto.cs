@@ -5,7 +5,10 @@ namespace ArtistManagementSystem.Server.DTOs
     public class ArtistDto
     {
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        public string LastName { get; set; } = string.Empty;
 
         public DateTime Dob { get; set; }
 
@@ -13,6 +16,9 @@ namespace ArtistManagementSystem.Server.DTOs
         public string Gender { get; set; } = string.Empty;
 
         public string? Address { get; set; }
+
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+        public string? Phone { get; set; }
 
         public int FirstReleaseYear { get; set; }
 
