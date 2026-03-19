@@ -22,7 +22,7 @@
 
         <!-- Artist Role: My Songs -->
         <li *ngIf="role === 'artist' && artistId">
-          <a [routerLink]="['/dashboard/artists', artistId, 'songs']" routerLinkActive="active">
+          <a [routerLink]="['/dashboard/artists', artistId, 'songs']" [state]="{ artistName: userName }" routerLinkActive="active">
             <span class="nav-icon">🎵</span> My Songs
           </a>
         </li>

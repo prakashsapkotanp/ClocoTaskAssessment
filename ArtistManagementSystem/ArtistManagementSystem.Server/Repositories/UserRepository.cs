@@ -60,10 +60,21 @@ namespace ArtistManagementSystem.Server.Repositories
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDTO dto)
         {
             using var connection = new SqlConnection(_connectionString);
-            const string sql = @"
-            UPDATE [user] 
-            SET FirstName = @FN, LastName = @LN, Phone = @Phone, Address = @Addr, Dob = @Dob, Gender = @Gender
-            WHERE Id = @Id";
+            string sql;
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                sql = @"
+                UPDATE [user] 
+                SET FirstName = @FN, LastName = @LN, Phone = @Phone, Address = @Addr, Dob = @Dob, Gender = @Gender, Password = @Password
+                WHERE Id = @Id";
+            }
+            else
+            {
+                sql = @"
+                UPDATE [user] 
+                SET FirstName = @FN, LastName = @LN, Phone = @Phone, Address = @Addr, Dob = @Dob, Gender = @Gender
+                WHERE Id = @Id";
+            }
 
             await connection.OpenAsync();
             using var cmd = new SqlCommand(sql, connection);
@@ -74,6 +85,11 @@ namespace ArtistManagementSystem.Server.Repositories
             cmd.Parameters.AddWithValue("@Addr", (object?)dto.Address ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Dob", dto.Dob);
             cmd.Parameters.AddWithValue("@Gender", dto.Gender);
+            
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                cmd.Parameters.AddWithValue("@Password", dto.Password);
+            }
 
             return await cmd.ExecuteNonQueryAsync() > 0;
         }

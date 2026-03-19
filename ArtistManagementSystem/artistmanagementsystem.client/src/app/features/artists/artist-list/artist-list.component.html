@@ -103,6 +103,7 @@
           <div class="form-group">
             <label>Date of Birth<sup>*</sup></label>
             <input type="date" formControlName="dob" class="input-field" />
+            <span class="error" *ngIf="form.get('dob')?.invalid && form.get('dob')?.touched">Required.</span>
           </div>
           <div class="form-group">
             <label>Gender<sup>*</sup></label>
@@ -112,6 +113,7 @@
               <option value="f">Female</option>
               <option value="o">Other</option>
             </select>
+            <span class="error" *ngIf="form.get('gender')?.invalid && form.get('gender')?.touched">Required.</span>
           </div>
         </div>
         <div class="row-2">
@@ -122,8 +124,9 @@
               *ngIf="form.get('firstReleaseYear')?.invalid && form.get('firstReleaseYear')?.touched">Required.</span>
           </div>
           <div class="form-group">
-            <label>Albums Released</label>
+            <label>Albums Released<sup>*</sup></label>
             <input type="number" formControlName="noOfAlbumsReleased" class="input-field" placeholder="0" />
+            <span class="error" *ngIf="form.get('noOfAlbumsReleased')?.invalid && form.get('noOfAlbumsReleased')?.touched">Required.</span>
           </div>
         </div>
         <div class="form-group">

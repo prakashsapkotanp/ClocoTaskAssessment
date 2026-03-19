@@ -94,7 +94,7 @@ export class ArtistListComponent implements OnInit {
     });
   }
 
-  viewSongs(a: any) { this.router.navigate(['/dashboard/artists', a.id, 'songs']); }
+  viewSongs(a: any) { this.router.navigate(['/dashboard/artists', a.id, 'songs'], { state: { artistName: a.name } }); }
 
   exportCsv() {
     this.artistService.exportCsv().subscribe(blob => {
@@ -110,7 +110,7 @@ export class ArtistListComponent implements OnInit {
     if (!file) return;
     this.artistService.importCsv(file).subscribe({
       next: (res) => { this.showToast(res.message, 'success'); this.load(); },
-      error: () => this.showToast('Import failed.', 'error')
+      error: (err) => this.showToast(err.error?.message || 'Import failed.', 'error')
     });
     event.target.value = '';
   }
